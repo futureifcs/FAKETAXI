@@ -10,26 +10,8 @@ bot.on('polling_error', (error) => {
   console.log(error);
 });
 
-const playersPairs = [
-  'Директор + Андрик',
-  'Директор + Стасик',
-  'Директор + Вовчик',
-  'Стасик + Андрик',
-  'Стасик + Вовчик',
-  'Андрик + Вовчик'
-];
-
-function getrandomPair() {
-  return playersPairs[Math.floor(Math.random(), playersPairs.length)];
-}
-
-function message() {
-  const randomPair = getrandomPair();
-  return `На сегодня директором лиги была назначена следующая пара игроков ${randomPair}`;
-}
-
 function smokemessage() {
-  return 'Пошлите на перекур';
+  return 'Директору надо перекурить, @KaNaPaTsky @belevandy вы с ним?';
 }
 
 function lunchmessage() {
@@ -37,10 +19,69 @@ function lunchmessage() {
 }
 
 function packetmessage() {
-  return '@belevandy пошли в джульету заносить пакет';
+  return '@belevandy пошли в джульету заносить пакет.';
 }
 
-let chatId;
+function provetrivanie() {
+  return 'В кабинете тестировщиков проветривание. Директор предлагает выйти на кофеек.';
+}
+
+function sendRequest(message) {
+  const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=-1002257244471&text=${encodeURIComponent(message)}`;
+  const xht = new XMLHttpRequest();
+  xht.open("GET", url, true);
+  xht.send(); console.log(`Сообщение отправлено по URL: ${url}`);
+}
+
+function smokeotpravka() {
+  sendRequest(smokemessage());
+}
+
+function lunchotpravka() {
+  sendRequest(lunchmessage());
+}
+
+function packetotpravka() {
+  sendRequest(packetmessage());
+}
+
+function provetrivanieotpravka() {
+  sendRequest(provetrivanie());
+}
+
+cron.schedule('0 40 9 * * 1-5', () => {
+  smokeotpravka();
+}, {
+  timezone: "Europe/Moscow"
+});
+
+cron.schedule('0 0 12 * * 1-5', () => {
+  lunchotpravka();
+}, {
+  timezone: "Europe/Moscow"
+});
+
+cron.schedule('0 0 14 * * 1-5', () => {
+  packetotpravka();
+}, {
+  timezone: "Europe/Moscow"
+});
+
+cron.schedule('0 23 21 * * 1-5', () => {
+  provetrivanieotpravka();
+}, {
+  timezone: "Europe/Moscow"
+});
+
+/*Запуск бота*/
+bot.onText(/\/start/, (msg) => {
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, 'Бот SC Kicker готов к работе.');
+  console.log(`chatId из start команды ${chatId}`);
+});
+
+/*Код рандома*/
+let players = [];
 
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -50,117 +91,10 @@ function shuffleArray(array) {
   return array;
 };
 
-function otpravka() {
-    const url = `httpsapi.telegram.orgbot${token}sendMessagechat_id=-1002257244471&text=${encodeURIComponent(message())}`; 
-    const xht = new XMLHttpRequest();
-    xht.open(GET, url);
-    xht.send();
-    console.log(`Сообщение отправлено по URL ${url}`);
-}
-
-function smokeotpravka() {
-  const url = `httpsapi.telegram.orgbot${token}sendMessagechat_id=-1002257244471&text=${encodeURIComponent(smokemessage())}`; 
-  const xht = new XMLHttpRequest();
-  xht.open(GET, url);
-  xht.send();
-  console.log(`Сообщение отправлено по URL ${url}`);
-}
-
-function lunchotpravka() {
-  const url = `httpsapi.telegram.orgbot${token}sendMessagechat_id=-1002257244471&text=${encodeURIComponent(lunchmessage())}`; 
-  const xht = new XMLHttpRequest();
-  xht.open(GET, url);
-  xht.send();
-  console.log(`Сообщение отправлено по URL ${url}`);
-}
-
-function packetpravka() {
-  const url = `httpsapi.telegram.orgbot${token}sendMessagechat_id=-1002257244471&text=${encodeURIComponent(packetmessage())}`; 
-  const xht = new XMLHttpRequest();
-  xht.open(GET, url);
-  xht.send();
-  console.log(`Сообщение отправлено по URL ${url}`);
-}
-
-/*bot.on('message', (msg) => {
-  chatId = msg.chat.id;
-  bot.sendMessage(chatId, 'Добрый день.');
-  console.log(`Сохраненный chatId ${chatId}`);
-});*/
-
-
-cron.schedule('0 40 9 * * *', () => {
-  if (chatId) {
-    smokeotpravka();
-  } else {
-    console.log('chatId не определен');
-  }
-}, {
-  timezone: "Europe/Moscow"
-});
-
-cron.schedule('0 0 12 * * *', () => {
-  if (chatId) {
-    lunchotpravka();
-  } else {
-    console.log('chatId не определен');
-  }
-}, {
-  timezone: "Europe/Moscow"
-});
-
-cron.schedule('0 0 12 * * *', () => {
-  if (chatId) {
-    otpravka();
-  } else {
-    console.log('chatId не определен');
-  }
-}, {
-  timezone: "Europe/Moscow"
-});
-
-cron.schedule('0 0 14 * * *', () => {
-  if (chatId) {
-    packetpravka();
-  } else {
-    console.log('chatId не определен');
-  }
-}, {
-  timezone: "Europe/Moscow"
-});
-
-cron.schedule('0 30 15 * * *', () => {
-  if (chatId) {
-    smokeotpravka();
-  } else {
-    console.log('chatId не определен');
-  }
-}, {
-  timezone: "Europe/Moscow"
-});
-
-cron.schedule('0 04 16 * * *', () => {
-  if (chatId) {
-    smokeotpravka();
-  } else {
-    console.log('chatId не определен');
-  }
-}, {
-  timezone: "Europe/Moscow"
-});
-
-bot.onText(/\/start/, (msg) => {
-  const chatId = msg.chat.id;
-  bot.sendMessage(chatId, 'Бот SC Kicker готов к работе.');
-  console.log(`chatId из start команды ${chatId}`);
-});
-
-let players = [];
-
 bot.onText(/\/random/, (msg) => {
   const chatId = msg.chat.id;
   if (players.length !== 4) {
-      bot.sendMessage(chatId, 'Нужно 4 игрока. Напишите их имена сначала.');
+      bot.sendMessage(chatId, 'Для запуска великого директорского рандома необходимо ввести имена четырех игроков в величайшую игру.');
   } else {
       const shuffledPlayers = shuffleArray(players);
       const pair1 = `${shuffledPlayers[0]} + ${shuffledPlayers[1]}`;
@@ -175,9 +109,17 @@ bot.on('message', (msg) => {
   if (!text.startsWith('/')) {
       if (players.length < 4) {
           players.push(text);
-          bot.sendMessage(chatId, `Игрок "${text}" добавлен. Осталось ${4 - players.length} игроков.`);
+          if (players.length === 1){
+            bot.sendMessage(chatId, `Задрот в кикер "${text}" залетел в директорский рандом. Введи имена еще ${4 - players.length}-ех олухов которые будут играть.`);
+          }
+          if (players.length === 2){
+            bot.sendMessage(chatId, `Задрот в кикер "${text}" залетел в директорский рандом. Введи имена еще ${4 - players.length}-ух олухов которые будут играть.`);
+          }
+          if (players.length === 3){
+            bot.sendMessage(chatId, `Задрот в кикер "${text}" залетел в директорский рандом. Введи имя последнего олуха который будет играть.`);
+          }
           if (players.length === 4) {
-              bot.sendMessage(chatId, 'Все игроки добавлены. Используйте /random для составления пар.');
+              bot.sendMessage(chatId, 'Все олухи добавлены. Нажми на /random для принятия решения директора.');
           }
       } else {
           bot.sendMessage(chatId, 'Все 4 игрока уже добавлены.');
